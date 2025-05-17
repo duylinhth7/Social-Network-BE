@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router: Router = Router();
-import * as controller from "../controllers/user.controller";
 import multer from "multer";
+import * as controller from "../controllers/client/user.controller"
 import * as userValidate from "../../../validate/user.validate";
 import { uploadSingle } from "../../../middlewares/uploadCloud.middware";
 

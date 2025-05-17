@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import User from "../models/client/user.model";
+import User from "../../models/client/user.model";
 import md5 from "md5";
-import { genarateNumber, genarateToken } from "../../../helpers/genarate";
-import ForgetPassword from "../models/client/forget-password.model";
-import sendMail from "../../../helpers/sendMail";
+import { genarateNumber, genarateToken } from "../../../../helpers/genarate";
+import ForgetPassword from "../../models/client/forget-password.model";
+import sendMail from "../../../../helpers/sendMail";
 
 // [POST] /api/v1/register
 export const register = async (req: Request, res: Response): Promise<void> => {
