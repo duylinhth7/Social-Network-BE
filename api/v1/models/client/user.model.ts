@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
         default: "active"
     },
     token: String,
+    followews: [],
+    following: [],
     deleted: {
         type: Boolean,
         default: false

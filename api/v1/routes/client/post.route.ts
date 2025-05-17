@@ -1,13 +1,13 @@
 import { Router } from "express";
 const router: Router = Router();
-import * as controller from "../controllers/client/post.controller";
+import * as controller from "../../controllers/client/post.controller";
 import multer from "multer";
 // import * as userValidate from "../../../validate/user.validate";
 import {
   uploadFields,
   uploadSingle,
-} from "../../../middlewares/uploadCloud.middware";
-import { postValidate } from "../../../validate/post.validate";
+} from "../../../../middlewares/uploadCloud.middware";
+import { postValidate } from "../../../../validate/post.validate";
 
 const upload = multer();
 

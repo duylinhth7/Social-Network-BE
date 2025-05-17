@@ -1,9 +1,9 @@
 import { Router } from "express";
 const router: Router = Router();
 import multer from "multer";
-import * as controller from "../controllers/client/user.controller"
-import * as userValidate from "../../../validate/user.validate";
-import { uploadSingle } from "../../../middlewares/uploadCloud.middware";
+import * as controller from "../../controllers/client/user.controller"
+import * as userValidate from "../../../../validate/user.validate";
+import { uploadSingle } from "../../../../middlewares/uploadCloud.middware";
 
 const upload = multer();
 

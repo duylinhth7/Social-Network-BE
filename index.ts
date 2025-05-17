@@ -1,9 +1,9 @@
 import express, {Express} from "express";
-import indexRouterV1 from "./api/v1/routes/index.route";
 import dotenv from "dotenv";
 import * as database from "./config/database";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser"
+import indexRouterV1 from "./api/v1/routes/client/index.route";
 
 dotenv.config();
 database.connect();
