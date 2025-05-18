@@ -36,7 +36,12 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             req.body.token = (0, genarate_1.genarateToken)(30);
             const newUser = new user_model_1.default(req.body);
             yield newUser.save();
-            res.cookie("token", newUser.token);
+            res.cookie("token", newUser.token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "Strict",
+                maxAge: 24 * 60 * 60 * 1000,
+            });
             res.json({
                 code: 200,
                 message: "Tạo tài khoản thành công!",
@@ -75,10 +80,19 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
             return;
         }
-        res.cookie("token", checkEmail.token);
+        res.cookie("token", checkEmail.token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: 24 * 60 * 60 * 1000,
+        });
+        const user = yield user_model_1.default.findOne({
+            token: checkEmail.token
+        }).select("-password");
         res.json({
             code: 200,
-            message: "Đăng nhập thành công!",
+            user: user,
+            message: "Đăng nhập thành công!!!",
         });
     }
     catch (error) {
