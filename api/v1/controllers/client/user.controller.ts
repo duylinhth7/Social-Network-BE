@@ -73,9 +73,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       sameSite: "Strict", // Chống CSRF (hoặc dùng 'Lax' nếu bạn test local)
       maxAge: 24 * 60 * 60 * 1000, // Thời gian sống (1 ngày)
     });
+    const user = await User.findOne({
+      token: checkEmail.token
+    }).select("-password")
 
     res.json({
       code: 200,
+      user: user,
       message: "Đăng nhập thành công!",
     });
   } catch (error) {
