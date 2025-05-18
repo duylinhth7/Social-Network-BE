@@ -110,7 +110,7 @@ const detail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             _id: id,
             deleted: false,
             status: "active",
-        }).select("fullName email");
+        }).select("-password");
         res.json({
             code: 200,
             message: "Thành công!",

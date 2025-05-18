@@ -99,7 +99,7 @@ export const detail = async (req: Request, res: Response): Promise<void> => {
       _id: id,
       deleted: false,
       status: "active",
-    }).select("fullName email");
+    }).select("-password");
     res.json({
       code: 200,
       message: "Thành công!",
