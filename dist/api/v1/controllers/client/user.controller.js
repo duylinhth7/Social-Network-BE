@@ -127,6 +127,9 @@ const detail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.detail = detail;
 const edit = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        if (req.body.password) {
+            req.body.password = (0, md5_1.default)(req.body.password);
+        }
         const id = req.params.id;
         const checkExits = yield user_model_1.default.findOne({
             _id: id,

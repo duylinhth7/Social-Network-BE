@@ -115,6 +115,9 @@ export const detail = async (req: Request, res: Response): Promise<void> => {
 //[PATCH] /api/v1/user/edit/:id
 export const edit = async (req: Request, res: Response): Promise<void> => {
   try {
+    if(req.body.password){
+      req.body.password = md5(req.body.password)
+    }
     const id = req.params.id;
     const checkExits = await User.findOne({
       _id: id,
