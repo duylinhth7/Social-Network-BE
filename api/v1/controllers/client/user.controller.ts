@@ -112,6 +112,36 @@ export const detail = async (req: Request, res: Response): Promise<void> => {
     });
   }
 };
+//[PATCH] /api/v1/user/edit/:id
+export const edit = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id;
+    const checkExits = await User.findOne({
+      _id: id,
+      deleted: false
+    });
+    if(!checkExits){
+      res.json({
+        code: 400,
+        message: "Không hợp lệ!"
+      });
+      return;
+    } else {
+      await User.updateOne({
+        _id: id
+      }, req.body)
+    };
+    res.json({
+      code: 200,
+      message: "Cập nhật thành công!"
+    })
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Lỗi!"
+    })
+  }
+};
 
 // [POST] /api/v1/user/password/forget
 export const forgetPassword = async (req: Request, res: Response) => {

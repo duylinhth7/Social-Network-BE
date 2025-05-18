@@ -4,6 +4,7 @@ import multer from "multer";
 import * as controller from "../../controllers/client/user.controller"
 import * as userValidate from "../../../../validate/user.validate";
 import { uploadSingle } from "../../../../middlewares/uploadCloud.middware";
+import authMiddleware from "../../../../middlewares/auth.middleware";
 
 const upload = multer();
 
@@ -13,6 +14,13 @@ router.post(
   uploadSingle,
   userValidate.register,
   controller.register
+);
+router.patch(
+  "/edit/:id",
+  authMiddleware,
+  upload.single("avatar"),
+  uploadSingle,
+  controller.edit
 );
 router.post("/login", userValidate.login, controller.login);
 router.get("/detail/:id", controller.detail);

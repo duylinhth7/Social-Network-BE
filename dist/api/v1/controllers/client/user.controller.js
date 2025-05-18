@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetPassword = exports.otpPassword = exports.forgetPassword = exports.detail = exports.login = exports.register = void 0;
+exports.resetPassword = exports.otpPassword = exports.forgetPassword = exports.edit = exports.detail = exports.login = exports.register = void 0;
 const user_model_1 = __importDefault(require("../../models/client/user.model"));
 const md5_1 = __importDefault(require("md5"));
 const genarate_1 = require("../../../../helpers/genarate");
@@ -125,6 +125,39 @@ const detail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.detail = detail;
+const edit = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        const checkExits = yield user_model_1.default.findOne({
+            _id: id,
+            deleted: false
+        });
+        if (!checkExits) {
+            res.json({
+                code: 400,
+                message: "Không hợp lệ!"
+            });
+            return;
+        }
+        else {
+            yield user_model_1.default.updateOne({
+                _id: id
+            }, req.body);
+        }
+        ;
+        res.json({
+            code: 200,
+            message: "Cập nhật thành công!"
+        });
+    }
+    catch (error) {
+        res.json({
+            code: 400,
+            message: "Lỗi!"
+        });
+    }
+});
+exports.edit = edit;
 const forgetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const email = req.body.email;
