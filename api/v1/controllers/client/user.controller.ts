@@ -23,7 +23,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       req.body.token = genarateToken(30);
       const newUser = new User(req.body);
       await newUser.save();
-      res.cookie("token", newUser.token);
+      res.cookie("token", newUser.token, {
+        httpOnly: true, // Không cho JavaScript truy cập (bảo mật)
+        secure: true, // Chỉ gửi qua HTTPS
+        sameSite: "Strict", // Chống CSRF (hoặc dùng 'Lax' nếu bạn test local)
+        maxAge: 24 * 60 * 60 * 1000, // Thời gian sống (1 ngày)
+      });
+
       res.json({
         code: 200,
         message: "Tạo tài khoản thành công!",
@@ -61,7 +67,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       });
       return;
     }
-    res.cookie("token", checkEmail.token);
+    res.cookie("token", checkEmail.token, {
+      httpOnly: true, // Không cho JavaScript truy cập (bảo mật)
+      secure: true, // Chỉ gửi qua HTTPS
+      sameSite: "Strict", // Chống CSRF (hoặc dùng 'Lax' nếu bạn test local)
+      maxAge: 24 * 60 * 60 * 1000, // Thời gian sống (1 ngày)
+    });
+
     res.json({
       code: 200,
       message: "Đăng nhập thành công!",

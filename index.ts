@@ -12,7 +12,10 @@ database.connect();
 const app: Express = express();
 const port:string | number = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000", // URL của frontend (React hoặc client khác)
+  credentials: true                // Cho phép gửi cookie
+}));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
