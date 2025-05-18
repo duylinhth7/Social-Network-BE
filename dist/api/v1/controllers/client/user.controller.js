@@ -82,12 +82,12 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         res.cookie("token", checkEmail.token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "Strict",
+            secure: false,
+            sameSite: "Lax",
             maxAge: 24 * 60 * 60 * 1000,
         });
         const user = yield user_model_1.default.findOne({
-            token: checkEmail.token
+            token: checkEmail.token,
         }).select("-password");
         res.json({
             code: 200,

@@ -68,14 +68,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
     res.cookie("token", checkEmail.token, {
-      httpOnly: true, // Không cho JavaScript truy cập (bảo mật)
-      secure: true, // Chỉ gửi qua HTTPS
-      sameSite: "Strict", // Chống CSRF (hoặc dùng 'Lax' nếu bạn test local)
-      maxAge: 24 * 60 * 60 * 1000, // Thời gian sống (1 ngày)
+      httpOnly: true,
+      secure: false, // vì không dùng HTTPS local
+      sameSite: "Lax", // chấp nhận cookie cross-origin nhưng vẫn hạn chế CSRF
+      maxAge: 24 * 60 * 60 * 1000,
     });
+
     const user = await User.findOne({
-      token: checkEmail.token
-    }).select("-password")
+      token: checkEmail.token,
+    }).select("-password");
 
     res.json({
       code: 200,
