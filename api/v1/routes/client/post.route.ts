@@ -11,6 +11,8 @@ import { postValidate } from "../../../../validate/post.validate";
 
 const upload = multer();
 
+
+router.get("/:id", controller.getPostUser);
 router.post(
   "/",
   upload.fields([

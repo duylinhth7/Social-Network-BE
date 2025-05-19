@@ -44,6 +44,7 @@ const multer_1 = __importDefault(require("multer"));
 const uploadCloud_middware_1 = require("../../../../middlewares/uploadCloud.middware");
 const post_validate_1 = require("../../../../validate/post.validate");
 const upload = (0, multer_1.default)();
+router.get("/:id", controller.getPostUser);
 router.post("/", upload.fields([
     { name: "images", maxCount: 3 },
     { name: "videos", maxCount: 2 },

@@ -2,6 +2,29 @@ import { Request, Response } from "express";
 import Post from "../../models/client/post.model";
 import User from "../../models/client/user.model";
 
+// [GET] /post/:id
+export const getPostUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const user_id = req.params.id;
+    const posts = await Post.find({
+      user_id: user_id,
+      deleted: false,
+    });
+    res.json({
+      code: 200,
+      posts: posts
+    })
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Lỗi!"
+    })
+  }
+};
+
 // [POST] /post
 export const creatPost = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -308,7 +331,7 @@ export const deleteComment = async (
           },
         },
       }
-    );  
+    );
     res.json({
       code: 200,
       message: "Xóa thành công!",

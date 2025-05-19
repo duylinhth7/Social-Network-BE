@@ -12,9 +12,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteComment = exports.getComment = exports.commenntPost = exports.unLike = exports.likePost = exports.deletePost = exports.editPost = exports.getAllPost = exports.creatPost = void 0;
+exports.deleteComment = exports.getComment = exports.commenntPost = exports.unLike = exports.likePost = exports.deletePost = exports.editPost = exports.getAllPost = exports.creatPost = exports.getPostUser = void 0;
 const post_model_1 = __importDefault(require("../../models/client/post.model"));
 const user_model_1 = __importDefault(require("../../models/client/user.model"));
+const getPostUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user_id = req.params.id;
+        const posts = yield post_model_1.default.find({
+            user_id: user_id,
+            deleted: false,
+        });
+        res.json({
+            code: 200,
+            posts: posts
+        });
+    }
+    catch (error) {
+        res.json({
+            code: 400,
+            message: "Lỗi!"
+        });
+    }
+});
+exports.getPostUser = getPostUser;
 const creatPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user_id = req.user.id;
