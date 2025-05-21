@@ -13,6 +13,7 @@ const upload = multer();
 
 
 router.get("/:id", controller.getPostUser);
+router.get("/detail/:id", controller.postDetail);
 router.post(
   "/",
   upload.fields([

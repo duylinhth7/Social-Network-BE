@@ -349,3 +349,20 @@ export const deleteComment = async (
     });
   }
 };
+
+//[GET] /detail/:id
+export const postDetail = async (req:Request, res:Response):Promise<void> => {
+  const post_id = req.params.id;
+  const post = await Post.find({
+    _id: post_id,
+    deleted: false
+  }).lean();
+  for(const item of post){
+    const infoUser = await User.findOne({
+      _id: item.user_id,
+      deleted: false
+    }).select("fullName avatar");
+    item["infoUser"] = infoUser
+  }
+  res.json(post)
+}
