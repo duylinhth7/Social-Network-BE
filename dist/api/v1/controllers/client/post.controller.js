@@ -24,13 +24,13 @@ const getPostUser = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         });
         res.json({
             code: 200,
-            posts: posts
+            posts: posts,
         });
     }
     catch (error) {
         res.json({
             code: 400,
-            message: "Lỗi!"
+            message: "Lỗi!",
         });
     }
 });
@@ -79,13 +79,13 @@ const getAllPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }).lean();
         for (const item of posts) {
             const infoUser = yield user_model_1.default.findOne({
-                _id: item.user_id
+                _id: item.user_id,
             });
             item["infoUser"] = infoUser;
         }
         res.json({
             code: 200,
-            posts: posts
+            posts: posts,
         });
     }
     catch (error) {
@@ -332,16 +332,21 @@ const deleteComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.deleteComment = deleteComment;
 const postDetail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post_id = req.params.id;
-    const post = yield post_model_1.default.find({
+    const post = yield post_model_1.default.findOne({
         _id: post_id,
-        deleted: false
+        deleted: false,
     }).lean();
-    for (const item of post) {
-        const infoUser = yield user_model_1.default.findOne({
-            _id: item.user_id,
-            deleted: false
-        }).select("fullName avatar");
-        item["infoUser"] = infoUser;
+    const infoUser = yield user_model_1.default.findOne({
+        _id: post.user_id,
+    }).select("fullName avatar");
+    post["infoUser"] = infoUser;
+    if (post["comments"].length > 0) {
+        for (const item of post.comments) {
+            const infoUser = yield user_model_1.default.findOne({
+                _id: item.user_id,
+            }).select("fullName avatar");
+            item["infoUser"] = infoUser;
+        }
     }
     res.json(post);
 });
