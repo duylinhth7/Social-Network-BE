@@ -76,10 +76,16 @@ const getAllPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const posts = yield post_model_1.default.find({
             deleted: false,
-        });
+        }).lean();
+        for (const item of posts) {
+            const infoUser = yield user_model_1.default.findOne({
+                _id: item.user_id
+            });
+            item["infoUser"] = infoUser;
+        }
         res.json({
             code: 200,
-            posts: posts,
+            posts: posts
         });
     }
     catch (error) {

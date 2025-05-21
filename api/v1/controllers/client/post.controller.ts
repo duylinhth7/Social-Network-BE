@@ -71,10 +71,16 @@ export const getAllPost = async (
   try {
     const posts = await Post.find({
       deleted: false,
-    });
+    }).lean();
+    for(const item of posts){
+      const infoUser = await User.findOne({
+        _id: item.user_id
+      });
+      item["infoUser"] = infoUser;
+    }
     res.json({
       code: 200,
-      posts: posts,
+      posts: posts
     });
   } catch (error) {
     res.json({
