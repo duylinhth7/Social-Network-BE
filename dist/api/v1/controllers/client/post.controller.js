@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteComment = exports.getComment = exports.commenntPost = exports.unLike = exports.likePost = exports.deletePost = exports.editPost = exports.getAllPost = exports.creatPost = exports.getPostUser = void 0;
+exports.postDetail = exports.deleteComment = exports.getComment = exports.commenntPost = exports.unLike = exports.likePost = exports.deletePost = exports.editPost = exports.getAllPost = exports.creatPost = exports.getPostUser = void 0;
 const post_model_1 = __importDefault(require("../../models/client/post.model"));
 const user_model_1 = __importDefault(require("../../models/client/user.model"));
 const getPostUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -330,3 +330,19 @@ const deleteComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.deleteComment = deleteComment;
+const postDetail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const post_id = req.params.id;
+    const post = yield post_model_1.default.find({
+        _id: post_id,
+        deleted: false
+    }).lean();
+    for (const item of post) {
+        const infoUser = yield user_model_1.default.findOne({
+            _id: item.user_id,
+            deleted: false
+        }).select("fullName avatar");
+        item["infoUser"] = infoUser;
+    }
+    res.json(post);
+});
+exports.postDetail = postDetail;
