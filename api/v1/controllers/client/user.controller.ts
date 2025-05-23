@@ -5,6 +5,37 @@ import { genarateNumber, genarateToken } from "../../../../helpers/genarate";
 import ForgetPassword from "../../models/client/forget-password.model";
 import sendMail from "../../../../helpers/sendMail";
 
+//[GET] /api/v1/user
+export const index = async (req: Request, res: Response): Promise<void> => {
+  try {
+    let find = {
+      deleted: false,
+      status: "active",
+    };
+    const keyword: RegExp = new RegExp(req.query.keyword, "i");
+    if (keyword) {
+      find["fullName"] = keyword;
+    }
+    const users = await User.find(find).select("fullName avatar");
+    if(users.length > 0){
+      res.json({
+        code: 200,
+        users: users
+      })
+    }else {
+      res.json({
+        code: 400,
+        message: "Không tìm thấy user này!"
+      })
+    }
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Lỗi!"
+    })
+  }
+};
+
 // [POST] /api/v1/register
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -115,34 +146,37 @@ export const detail = async (req: Request, res: Response): Promise<void> => {
 //[PATCH] /api/v1/user/edit/:id
 export const edit = async (req: Request, res: Response): Promise<void> => {
   try {
-    if(req.body.password){
-      req.body.password = md5(req.body.password)
+    if (req.body.password) {
+      req.body.password = md5(req.body.password);
     }
     const id = req.params.id;
     const checkExits = await User.findOne({
       _id: id,
-      deleted: false
+      deleted: false,
     });
-    if(!checkExits){
+    if (!checkExits) {
       res.json({
         code: 400,
-        message: "Không hợp lệ!"
+        message: "Không hợp lệ!",
       });
       return;
     } else {
-      await User.updateOne({
-        _id: id
-      }, req.body)
-    };
+      await User.updateOne(
+        {
+          _id: id,
+        },
+        req.body
+      );
+    }
     res.json({
       code: 200,
-      message: "Cập nhật thành công!"
-    })
+      message: "Cập nhật thành công!",
+    });
   } catch (error) {
     res.json({
       code: 400,
-      message: "Lỗi!"
-    })
+      message: "Lỗi!",
+    });
   }
 };
 

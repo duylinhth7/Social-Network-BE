@@ -12,12 +12,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetPassword = exports.otpPassword = exports.forgetPassword = exports.edit = exports.detail = exports.login = exports.register = void 0;
+exports.resetPassword = exports.otpPassword = exports.forgetPassword = exports.edit = exports.detail = exports.login = exports.register = exports.index = void 0;
 const user_model_1 = __importDefault(require("../../models/client/user.model"));
 const md5_1 = __importDefault(require("md5"));
 const genarate_1 = require("../../../../helpers/genarate");
 const forget_password_model_1 = __importDefault(require("../../models/client/forget-password.model"));
 const sendMail_1 = __importDefault(require("../../../../helpers/sendMail"));
+const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let find = {
+            deleted: false,
+            status: "active",
+        };
+        const keyword = new RegExp(req.query.keyword, "i");
+        if (keyword) {
+            find["fullName"] = keyword;
+        }
+        const users = yield user_model_1.default.find(find).select("fullName avatar");
+        if (users.length > 0) {
+            res.json({
+                code: 200,
+                users: users
+            });
+        }
+        else {
+            res.json({
+                code: 400,
+                message: "Không tìm thấy user này!"
+            });
+        }
+    }
+    catch (error) {
+        res.json({
+            code: 400,
+            message: "Lỗi!"
+        });
+    }
+});
+exports.index = index;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const email = req.body.email;
@@ -133,30 +165,29 @@ const edit = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const id = req.params.id;
         const checkExits = yield user_model_1.default.findOne({
             _id: id,
-            deleted: false
+            deleted: false,
         });
         if (!checkExits) {
             res.json({
                 code: 400,
-                message: "Không hợp lệ!"
+                message: "Không hợp lệ!",
             });
             return;
         }
         else {
             yield user_model_1.default.updateOne({
-                _id: id
+                _id: id,
             }, req.body);
         }
-        ;
         res.json({
             code: 200,
-            message: "Cập nhật thành công!"
+            message: "Cập nhật thành công!",
         });
     }
     catch (error) {
         res.json({
             code: 400,
-            message: "Lỗi!"
+            message: "Lỗi!",
         });
     }
 });

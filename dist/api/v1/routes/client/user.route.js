@@ -45,6 +45,7 @@ const userValidate = __importStar(require("../../../../validate/user.validate"))
 const uploadCloud_middware_1 = require("../../../../middlewares/uploadCloud.middware");
 const auth_middleware_1 = __importDefault(require("../../../../middlewares/auth.middleware"));
 const upload = (0, multer_1.default)();
+router.get("/", auth_middleware_1.default, controller.index);
 router.post("/register", upload.single("avatar"), uploadCloud_middware_1.uploadSingle, userValidate.register, controller.register);
 router.patch("/edit/:id", auth_middleware_1.default, upload.single("avatar"), uploadCloud_middware_1.uploadSingle, controller.edit);
 router.post("/login", userValidate.login, controller.login);

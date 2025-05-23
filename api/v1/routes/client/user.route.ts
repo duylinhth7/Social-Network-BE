@@ -8,6 +8,7 @@ import authMiddleware from "../../../../middlewares/auth.middleware";
 
 const upload = multer();
 
+router.get("/", authMiddleware, controller.index)
 router.post(
   "/register",
   upload.single("avatar"),
