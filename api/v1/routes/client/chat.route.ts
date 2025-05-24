@@ -1,8 +1,8 @@
 import { Router } from "express";
 const router: Router = Router();
 import * as controller from "../../controllers/client/chat.controller"
-import authMiddleware from "../../../../middlewares/auth.middleware";
+import { chatMiddleware } from "../../../../middlewares/chat.middleware";
 
-router.post("/:id", authMiddleware, controller.index);
+router.get("/:id", chatMiddleware, controller.index);
 
-export const chatRoutes: Router = router;
+export const  chatRoutes: Router = router;

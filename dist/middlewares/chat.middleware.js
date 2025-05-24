@@ -12,42 +12,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.index = void 0;
-const chat_model_1 = __importDefault(require("../../models/client/chat.model"));
-const user_model_1 = __importDefault(require("../../models/client/user.model"));
-const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.chatMiddleware = void 0;
+const room_chat_model_1 = __importDefault(require("../api/v1/models/client/room-chat.model"));
+const chatMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const userId = req.user.id;
         const roomChatId = req.params.id;
-        const chats = yield chat_model_1.default.find({
+        const checkRoomChat = yield room_chat_model_1.default.findOne({
+            _id: roomChatId,
             deleted: false,
-            room_chat_id: roomChatId,
-        }).lean();
-        for (const chat of chats) {
-            const user = yield user_model_1.default.findOne({
-                _id: chat.user_id,
-            }).select("avatar fullName");
-            chat["infoUser"] = user;
-        }
-        ;
-        if (chats) {
-            res.json({
-                code: 200,
-                chats: chats
-            });
+            "users.user_id": userId
+        });
+        if (checkRoomChat) {
+            next();
         }
         else {
             res.json({
                 code: 400,
-                message: "Không có đoạn chat nào!"
+                message: "Bạn không có quyền vào nhóm chat này!"
             });
         }
     }
     catch (error) {
-        console.log(error);
         res.json({
             code: 400,
             message: "Lỗi"
         });
     }
 });
-exports.index = index;
+exports.chatMiddleware = chatMiddleware;

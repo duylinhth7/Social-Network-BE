@@ -32,14 +32,11 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.chatRoutes = void 0;
 const express_1 = require("express");
 const router = (0, express_1.Router)();
 const controller = __importStar(require("../../controllers/client/chat.controller"));
-const auth_middleware_1 = __importDefault(require("../../../../middlewares/auth.middleware"));
-router.post("/:id", auth_middleware_1.default, controller.index);
+const chat_middleware_1 = require("../../../../middlewares/chat.middleware");
+router.get("/:id", chat_middleware_1.chatMiddleware, controller.index);
 exports.chatRoutes = router;

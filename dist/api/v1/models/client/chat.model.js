@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const chatSchema = new mongoose_1.default.Schema({
     user_id: String,
-    content: String,
+    message: String,
     room_chat_id: String,
     images: Array,
     deleted: {

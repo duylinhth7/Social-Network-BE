@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create = void 0;
+exports.getRoomChat = exports.create = void 0;
 const room_chat_model_1 = __importDefault(require("../../models/client/room-chat.model"));
+const user_model_1 = __importDefault(require("../../models/client/user.model"));
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { senderId, receiverId } = req.body;
@@ -38,17 +39,42 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
             yield room.save();
         }
-        ;
         res.json({
             code: 200,
-            chatId: room._id
+            chatId: room._id,
         });
     }
     catch (error) {
         res.json({
             code: 400,
-            message: "Lỗi"
+            message: "Lỗi",
         });
     }
 });
 exports.create = create;
+const getRoomChat = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        const roomChat = yield room_chat_model_1.default.findOne({
+            _id: id,
+            deleted: false,
+        }).lean();
+        for (const item of roomChat.users) {
+            const infoUser = yield user_model_1.default.findOne({
+                _id: item.user_id
+            }).select("fullName avatar");
+            item["infoUser"] = infoUser;
+        }
+        res.json({
+            code: 200,
+            roomChat: roomChat
+        });
+    }
+    catch (error) {
+        res.json({
+            code: 400,
+            message: "Lỗi!"
+        });
+    }
+});
+exports.getRoomChat = getRoomChat;

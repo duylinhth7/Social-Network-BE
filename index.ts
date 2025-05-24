@@ -21,7 +21,6 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: '*', // hoặc chỉ định frontend URL
-    methods: ["GET", "POST"]
   },
 });
 // Khởi tạo socket handler

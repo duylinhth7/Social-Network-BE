@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const chatSchema = new mongoose.Schema({
     user_id: String,
-    content: String,
+    message: String,
     room_chat_id: String,
     images: Array,
     deleted: {
