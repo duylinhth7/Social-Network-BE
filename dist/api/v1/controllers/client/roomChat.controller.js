@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRoomChat = exports.create = void 0;
+exports.getListRoom = exports.getRoomChat = exports.create = void 0;
 const room_chat_model_1 = __importDefault(require("../../models/client/room-chat.model"));
 const user_model_1 = __importDefault(require("../../models/client/user.model"));
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -61,20 +61,36 @@ const getRoomChat = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }).lean();
         for (const item of roomChat.users) {
             const infoUser = yield user_model_1.default.findOne({
-                _id: item.user_id
+                _id: item.user_id,
             }).select("fullName avatar");
             item["infoUser"] = infoUser;
         }
         res.json({
             code: 200,
-            roomChat: roomChat
+            roomChat: roomChat,
         });
     }
     catch (error) {
         res.json({
             code: 400,
-            message: "Lỗi!"
+            message: "Lỗi!",
         });
     }
 });
 exports.getRoomChat = getRoomChat;
+const getListRoom = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user_id = req.user.id;
+    const listRooms = yield room_chat_model_1.default.find({
+        "users.user_id": user_id,
+        typeRoom: "direct",
+        deleted: false
+    }).lean();
+    for (const item of listRooms) {
+        const newFind = item.users.find(item => item.user_id !== user_id);
+        delete item["users"];
+        const info = yield user_model_1.default.findOne({ _id: newFind.user_id }).select("fullName avatar");
+        item["info"] = info;
+    }
+    res.json(listRooms);
+});
+exports.getListRoom = getListRoom;

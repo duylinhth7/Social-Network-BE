@@ -52,20 +52,40 @@ export const getRoomChat = async (
       _id: id,
       deleted: false,
     }).lean();
-    for(const item of roomChat.users){
+    for (const item of roomChat.users) {
       const infoUser = await User.findOne({
-        _id: item.user_id
-      }).select("fullName avatar")
-      item["infoUser"] = infoUser
+        _id: item.user_id,
+      }).select("fullName avatar");
+      item["infoUser"] = infoUser;
     }
     res.json({
       code: 200,
-      roomChat: roomChat
-    })
+      roomChat: roomChat,
+    });
   } catch (error) {
     res.json({
       code: 400,
-      message: "Lỗi!"
-    })
+      message: "Lỗi!",
+    });
   }
+};
+
+//[GET] /getlist
+export const getListRoom = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const user_id: string = req.user.id;
+  const listRooms = await RoomChat.find({
+    "users.user_id": user_id,
+    typeRoom: "direct",
+    deleted: false
+  }).lean();
+  for(const item of listRooms){
+    const newFind = item.users.find(item => item.user_id !== user_id);
+    delete item["users"]
+    const info = await User.findOne({_id: newFind.user_id}).select("fullName avatar");
+    item["info"] = info
+  }
+  res.json(listRooms)
 };

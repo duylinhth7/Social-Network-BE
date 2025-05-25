@@ -32,16 +32,13 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.roomChatRoutes = void 0;
 const express_1 = require("express");
 const router = (0, express_1.Router)();
 const controller = __importStar(require("../../controllers/client/roomChat.controller"));
-const auth_middleware_1 = __importDefault(require("../../../../middlewares/auth.middleware"));
 const chat_middleware_1 = require("../../../../middlewares/chat.middleware");
-router.post("/create", auth_middleware_1.default, controller.create);
-router.get("/:id", auth_middleware_1.default, chat_middleware_1.chatMiddleware, controller.getRoomChat);
+router.post("/create", controller.create);
+router.get("/:id", chat_middleware_1.chatMiddleware, controller.getRoomChat);
+router.post("/getlistchat", controller.getListRoom);
 exports.roomChatRoutes = router;
