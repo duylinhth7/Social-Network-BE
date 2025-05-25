@@ -84,20 +84,20 @@ export const getListRoom = async (
     }).lean();
     for (const item of listRooms) {
       const newFind = item.users.find((item) => item.user_id !== user_id);
-      delete item["users"];
       const info = await User.findOne({ _id: newFind.user_id }).select(
         "fullName avatar"
       );
       item["info"] = info;
-      res.json({
-        code: 200,
-        listRooms: listRooms,
-      });
     }
+    delete listRooms["users"]
+    res.json({
+      code: 200,
+      listRooms: listRooms,
+    });
   } catch (error) {
     res.json({
       code: 400,
-      message: "Lỗi"
-    })
+      message: "Lỗi",
+    });
   }
 };
