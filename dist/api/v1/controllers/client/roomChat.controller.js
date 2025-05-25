@@ -92,7 +92,7 @@ const getListRoom = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             const info = yield user_model_1.default.findOne({ _id: newFind.user_id }).select("fullName avatar");
             item["info"] = info;
             res.json({
-                code: 400,
+                code: 200,
                 listRooms: listRooms,
             });
         }

@@ -90,7 +90,7 @@ export const getListRoom = async (
       );
       item["info"] = info;
       res.json({
-        code: 400,
+        code: 200,
         listRooms: listRooms,
       });
     }
