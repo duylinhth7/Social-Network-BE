@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "active"
     },
-    token: String,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
     followews: [],
     following: [],
     deleted: {

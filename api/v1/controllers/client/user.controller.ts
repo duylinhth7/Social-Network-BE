@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import User from "../../models/client/user.model";
 import md5 from "md5";
-import { genarateNumber, genarateToken } from "../../../../helpers/genarate";
+import jwt from "jsonwebtoken";
+import {
+  genarateNumber,
+  genarateToken,
+  genarateTokenJWT,
+} from "../../../../helpers/genarate";
 import ForgetPassword from "../../models/client/forget-password.model";
 import sendMail from "../../../../helpers/sendMail";
 
@@ -17,22 +22,22 @@ export const index = async (req: Request, res: Response): Promise<void> => {
       find["fullName"] = keyword;
     }
     const users = await User.find(find).select("fullName avatar");
-    if(users.length > 0){
+    if (users.length > 0) {
       res.json({
         code: 200,
-        users: users
-      })
-    }else {
+        users: users,
+      });
+    } else {
       res.json({
         code: 400,
-        message: "Không tìm thấy user này!"
-      })
+        message: "Không tìm thấy user này!",
+      });
     }
   } catch (error) {
     res.json({
       code: 400,
-      message: "Lỗi!"
-    })
+      message: "Lỗi!",
+    });
   }
 };
 
@@ -54,17 +59,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       req.body.token = genarateToken(30);
       const newUser = new User(req.body);
       await newUser.save();
-      res.cookie("token", newUser.token, {
-        httpOnly: true, // Không cho JavaScript truy cập (bảo mật)
-        secure: true, // Chỉ gửi qua HTTPS
-        sameSite: "Strict", // Chống CSRF (hoặc dùng 'Lax' nếu bạn test local)
-        maxAge: 24 * 60 * 60 * 1000, // Thời gian sống (1 ngày)
-      });
+      const tokenJWT = genarateTokenJWT(newUser);
 
       res.json({
         code: 200,
         message: "Tạo tài khoản thành công!",
         user: newUser,
+        tokenJWT: tokenJWT,
       });
     }
   } catch (error) {
@@ -98,20 +99,18 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       });
       return;
     }
-    res.cookie("token", checkEmail.token, {
-      httpOnly: true,
-      secure: false, // vì không dùng HTTPS local
-      sameSite: "Lax", // chấp nhận cookie cross-origin nhưng vẫn hạn chế CSRF
-      maxAge: 24 * 60 * 60 * 1000,
-    });
 
     const user = await User.findOne({
-      token: checkEmail.token,
-    }).select("-password");
+      email: email,
+    })
+      .select("-password")
+      .lean();
+    const tokenJWT = genarateTokenJWT(user);
 
     res.json({
       code: 200,
       user: user,
+      tokenJWT: tokenJWT,
       message: "Đăng nhập thành công!!!",
     });
   } catch (error) {
@@ -266,12 +265,18 @@ export const otpPassword = async (req: Request, res: Response) => {
       });
       return;
     } else {
-      const user = await User.findOne({
-        email: email,
-      });
-      res.cookie("token", user.token);
+      const token = genarateToken(30);
+      const user = await User.findOneAndUpdate(
+        { email },
+        {
+          passwordResetToken: token,
+          passwordResetExpires: Date.now() + 15 * 60 * 1000 // 15 phút
+        },
+        { new: true } // lấy document sau khi update
+      );
       res.json({
         code: 200,
+        passwordResetToken: user.passwordResetToken,
         message: "OTP hợp lệ",
       });
     }
@@ -288,13 +293,16 @@ export const otpPassword = async (req: Request, res: Response) => {
 export const resetPassword = async (req: Request, res: Response) => {
   try {
     const password: string = md5(req.body.password);
-    const token: string = req.cookies.token;
+    const passwordResetToken: string = req.body.passwordResetToken;
     await User.updateOne(
       {
-        token: token,
+        passwordResetToken: passwordResetToken,
+        passwordResetExpires: { $gt: Date.now() }, // Token còn hạn
       },
       {
         password: password,
+        passwordResetToken: null,
+        passwordResetExpires: null
       }
     );
     res.json({

@@ -13,7 +13,8 @@ const userSchema = new mongoose_1.default.Schema({
         type: String,
         default: "active"
     },
-    token: String,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
     followews: [],
     following: [],
     deleted: {

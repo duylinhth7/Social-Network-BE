@@ -32,20 +32,20 @@ const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (users.length > 0) {
             res.json({
                 code: 200,
-                users: users
+                users: users,
             });
         }
         else {
             res.json({
                 code: 400,
-                message: "Không tìm thấy user này!"
+                message: "Không tìm thấy user này!",
             });
         }
     }
     catch (error) {
         res.json({
             code: 400,
-            message: "Lỗi!"
+            message: "Lỗi!",
         });
     }
 });
@@ -68,16 +68,12 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             req.body.token = (0, genarate_1.genarateToken)(30);
             const newUser = new user_model_1.default(req.body);
             yield newUser.save();
-            res.cookie("token", newUser.token, {
-                httpOnly: true,
-                secure: true,
-                sameSite: "Strict",
-                maxAge: 24 * 60 * 60 * 1000,
-            });
+            const tokenJWT = (0, genarate_1.genarateTokenJWT)(newUser);
             res.json({
                 code: 200,
                 message: "Tạo tài khoản thành công!",
                 user: newUser,
+                tokenJWT: tokenJWT,
             });
         }
     }
@@ -112,18 +108,16 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
             return;
         }
-        res.cookie("token", checkEmail.token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "Lax",
-            maxAge: 24 * 60 * 60 * 1000,
-        });
         const user = yield user_model_1.default.findOne({
-            token: checkEmail.token,
-        }).select("-password");
+            email: email,
+        })
+            .select("-password")
+            .lean();
+        const tokenJWT = (0, genarate_1.genarateTokenJWT)(user);
         res.json({
             code: 200,
             user: user,
+            tokenJWT: tokenJWT,
             message: "Đăng nhập thành công!!!",
         });
     }
@@ -271,12 +265,14 @@ const otpPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             return;
         }
         else {
-            const user = yield user_model_1.default.findOne({
-                email: email,
-            });
-            res.cookie("token", user.token);
+            const token = (0, genarate_1.genarateToken)(30);
+            const user = yield user_model_1.default.findOneAndUpdate({ email }, {
+                passwordResetToken: token,
+                passwordResetExpires: Date.now() + 15 * 60 * 1000
+            }, { new: true });
             res.json({
                 code: 200,
+                passwordResetToken: user.passwordResetToken,
                 message: "OTP hợp lệ",
             });
         }
@@ -293,11 +289,14 @@ exports.otpPassword = otpPassword;
 const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const password = (0, md5_1.default)(req.body.password);
-        const token = req.cookies.token;
+        const passwordResetToken = req.body.passwordResetToken;
         yield user_model_1.default.updateOne({
-            token: token,
+            passwordResetToken: passwordResetToken,
+            passwordResetExpires: { $gt: Date.now() },
         }, {
             password: password,
+            passwordResetToken: null,
+            passwordResetExpires: null
         });
         res.json({
             code: 200,
