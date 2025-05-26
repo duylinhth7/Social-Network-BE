@@ -268,7 +268,7 @@ const otpPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             const token = (0, genarate_1.genarateToken)(30);
             const user = yield user_model_1.default.findOneAndUpdate({ email }, {
                 passwordResetToken: token,
-                passwordResetExpires: Date.now() + 15 * 60 * 1000
+                passwordResetExpires: Date.now() + 15 * 60 * 1000,
             }, { new: true });
             res.json({
                 code: 200,
@@ -296,7 +296,7 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         }, {
             password: password,
             passwordResetToken: null,
-            passwordResetExpires: null
+            passwordResetExpires: null,
         });
         res.json({
             code: 200,

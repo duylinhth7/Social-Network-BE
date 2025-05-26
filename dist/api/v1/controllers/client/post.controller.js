@@ -74,7 +74,9 @@ const creatPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.creatPost = creatPost;
 const getAllPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const my_id = req.user.id;
         const listFollowing = req.user.following;
+        listFollowing.push(my_id);
         const posts = yield post_model_1.default.find({
             deleted: false,
             user_id: { $in: listFollowing }

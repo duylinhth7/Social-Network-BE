@@ -270,7 +270,7 @@ export const otpPassword = async (req: Request, res: Response) => {
         { email },
         {
           passwordResetToken: token,
-          passwordResetExpires: Date.now() + 15 * 60 * 1000 // 15 phút
+          passwordResetExpires: Date.now() + 15 * 60 * 1000, // 15 phút
         },
         { new: true } // lấy document sau khi update
       );
@@ -302,7 +302,7 @@ export const resetPassword = async (req: Request, res: Response) => {
       {
         password: password,
         passwordResetToken: null,
-        passwordResetExpires: null
+        passwordResetExpires: null,
       }
     );
     res.json({

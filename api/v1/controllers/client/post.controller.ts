@@ -69,7 +69,9 @@ export const getAllPost = async (
   res: Response
 ): Promise<void> => {
   try {
+    const my_id = req.user.id;
     const listFollowing = req.user.following;
+    listFollowing.push(my_id)
     const posts = await Post.find({
       deleted: false,
       user_id: {$in: listFollowing}
