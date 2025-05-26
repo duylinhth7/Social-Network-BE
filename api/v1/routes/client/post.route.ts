@@ -37,12 +37,12 @@ router.patch(
 );
 
 //like
-router.patch("/like/:id", controller.likePost);
-router.patch("/unlike/:id", controller.unLike)
+// router.patch("/like/:id", controller.likePost);
+// router.patch("/unlike/:id", controller.unLike)
 //end like
 
 //comment
-router.post("/comment/:id", controller.commenntPost);
+// router.post("/comment/:id", controller.commenntPost);
 router.get("/comment/:id", controller. getComment);
 router.delete("/comment/:id", controller.deleteComment);
 //end comment

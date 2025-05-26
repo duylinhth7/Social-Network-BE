@@ -55,9 +55,6 @@ router.patch("/edit/:id", upload.fields([
     { name: "images", maxCount: 3 },
     { name: "videos", maxCount: 2 },
 ]), uploadCloud_middware_1.uploadFields, controller.editPost);
-router.patch("/like/:id", controller.likePost);
-router.patch("/unlike/:id", controller.unLike);
-router.post("/comment/:id", controller.commenntPost);
 router.get("/comment/:id", controller.getComment);
 router.delete("/comment/:id", controller.deleteComment);
 router.delete("/delete/:id", controller.deletePost);

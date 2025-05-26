@@ -89,7 +89,6 @@ export const getListRoom = async (
       );
       item["info"] = info;
     }
-    delete listRooms["users"]
     res.json({
       code: 200,
       listRooms: listRooms,

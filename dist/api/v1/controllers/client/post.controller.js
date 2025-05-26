@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postDetail = exports.deleteComment = exports.getComment = exports.commenntPost = exports.unLike = exports.likePost = exports.deletePost = exports.editPost = exports.getAllPost = exports.creatPost = exports.getPostUser = void 0;
+exports.postDetail = exports.deleteComment = exports.getComment = exports.deletePost = exports.editPost = exports.getAllPost = exports.creatPost = exports.getPostUser = void 0;
 const post_model_1 = __importDefault(require("../../models/client/post.model"));
 const user_model_1 = __importDefault(require("../../models/client/user.model"));
 const getPostUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -74,8 +74,10 @@ const creatPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.creatPost = creatPost;
 const getAllPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const listFollowing = req.user.following;
         const posts = yield post_model_1.default.find({
             deleted: false,
+            user_id: { $in: listFollowing }
         }).lean();
         for (const item of posts) {
             const infoUser = yield user_model_1.default.findOne({
@@ -166,105 +168,6 @@ const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deletePost = deletePost;
-const likePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user_id = req.user.id;
-        const post_id = req.params.id;
-        const hasLiked = yield post_model_1.default.exists({
-            _id: post_id,
-            likes: { $in: [user_id] },
-        });
-        if (hasLiked) {
-            res.json({
-                code: 400,
-                message: "Không hợp lệ",
-            });
-        }
-        else {
-            yield post_model_1.default.updateOne({
-                _id: post_id,
-                deleted: false,
-            }, {
-                $push: { likes: user_id },
-            });
-            res.json({
-                code: 200,
-                message: "Like thành công!",
-            });
-        }
-    }
-    catch (error) {
-        res.json({
-            code: 200,
-            message: "Lỗi!",
-        });
-    }
-});
-exports.likePost = likePost;
-const unLike = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user_id = req.user.id;
-        const post_id = req.params.id;
-        const hasLiked = yield post_model_1.default.exists({
-            _id: post_id,
-            likes: { $in: [user_id] },
-        });
-        if (!hasLiked) {
-            res.json({
-                code: 400,
-                message: "Không hợp lệ",
-            });
-        }
-        else {
-            yield post_model_1.default.updateOne({
-                _id: post_id,
-                deleted: false,
-            }, {
-                $pull: { likes: user_id },
-            });
-            res.json({
-                code: 200,
-                message: "Xóa like thành công!",
-            });
-        }
-    }
-    catch (error) {
-        res.json({
-            code: 200,
-            message: "Lỗi!",
-        });
-    }
-});
-exports.unLike = unLike;
-const commenntPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user_id = req.user.id;
-        const post_id = req.params.id;
-        const content = req.body.content;
-        yield post_model_1.default.updateOne({
-            _id: post_id,
-            deleted: false,
-        }, {
-            $push: {
-                comments: {
-                    user_id: user_id,
-                    content: content,
-                },
-            },
-        });
-        res.json({
-            code: 200,
-            message: "Thành công!",
-        });
-    }
-    catch (error) {
-        res.json({
-            code: 400,
-            message: "Lỗi!",
-        });
-    }
-});
-exports.commenntPost = commenntPost;
 const getComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const post_id = req.params.id;
@@ -308,7 +211,7 @@ const deleteComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const user_id = req.user.id;
         const post_id = req.params.id;
-        const comment_id = req.body.comment_id;
+        const comment_id = req.body.idComment;
         yield post_model_1.default.updateOne({ _id: post_id, deleted: false }, {
             $pull: {
                 comments: {

@@ -84,21 +84,21 @@ export const otpPassword = (req:Request, res:Response, next:NextFunction) => {
 export const resetPassword = (req:Request, res:Response, next:NextFunction) => {
     if(!req.body.password){
         res.json({
-            code: 200,
+            code: 400,
             message: "Vui lòng nhập mật khẩu mới!"
         });
         return;
     }
     if(!req.body.authPassword){
         res.json({
-            code: 200,
+            code: 400,
             message: "Vui lòng nhập xác thực mật khẩu mới!"
         });
         return;
     };
     if(req.body.password != req.body.authPassword){
         res.json({
-            code: 200,
+            code: 400,
             message: "Xác thực mật khẩu mới không trùng với mật khẩu mới!"
         });
         return;

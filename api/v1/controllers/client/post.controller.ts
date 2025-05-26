@@ -69,8 +69,11 @@ export const getAllPost = async (
   res: Response
 ): Promise<void> => {
   try {
+    const listFollowing = req.user.following;
     const posts = await Post.find({
       deleted: false,
+      user_id: {$in: listFollowing}
+
     }).lean();
     for (const item of posts) {
       const infoUser = await User.findOne({
@@ -169,113 +172,113 @@ export const deletePost = async (
   }
 };
 
-//[PATCH] /like/:id
-export const likePost = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const user_id: string = req.user.id;
-    const post_id: string = req.params.id;
-    const hasLiked = await Post.exists({
-      _id: post_id,
-      likes: { $in: [user_id] },
-    });
-    if (hasLiked) {
-      res.json({
-        code: 400,
-        message: "Không hợp lệ",
-      });
-    } else {
-      await Post.updateOne(
-        {
-          _id: post_id,
-          deleted: false,
-        },
-        {
-          $push: { likes: user_id },
-        }
-      );
-      res.json({
-        code: 200,
-        message: "Like thành công!",
-      });
-    }
-  } catch (error) {
-    res.json({
-      code: 200,
-      message: "Lỗi!",
-    });
-  }
-};
-//[PATCH] /unlike/:id
-export const unLike = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const user_id: string = req.user.id;
-    const post_id: string = req.params.id;
-    const hasLiked = await Post.exists({
-      _id: post_id,
-      likes: { $in: [user_id] },
-    });
-    if (!hasLiked) {
-      res.json({
-        code: 400,
-        message: "Không hợp lệ",
-      });
-    } else {
-      await Post.updateOne(
-        {
-          _id: post_id,
-          deleted: false,
-        },
-        {
-          $pull: { likes: user_id },
-        }
-      );
-      res.json({
-        code: 200,
-        message: "Xóa like thành công!",
-      });
-    }
-  } catch (error) {
-    res.json({
-      code: 200,
-      message: "Lỗi!",
-    });
-  }
-};
+// //[PATCH] /like/:id
+// export const likePost = async (req: Request, res: Response): Promise<void> => {
+//   try {
+//     const user_id: string = req.user.id;
+//     const post_id: string = req.params.id;
+//     const hasLiked = await Post.exists({
+//       _id: post_id,
+//       likes: { $in: [user_id] },
+//     });
+//     if (hasLiked) {
+//       res.json({
+//         code: 400,
+//         message: "Không hợp lệ",
+//       });
+//     } else {
+//       await Post.updateOne(
+//         {
+//           _id: post_id,
+//           deleted: false,
+//         },
+//         {
+//           $push: { likes: user_id },
+//         }
+//       );
+//       res.json({
+//         code: 200,
+//         message: "Like thành công!",
+//       });
+//     }
+//   } catch (error) {
+//     res.json({
+//       code: 200,
+//       message: "Lỗi!",
+//     });
+//   }
+// };
+// //[PATCH] /unlike/:id
+// export const unLike = async (req: Request, res: Response): Promise<void> => {
+//   try {
+//     const user_id: string = req.user.id;
+//     const post_id: string = req.params.id;
+//     const hasLiked = await Post.exists({
+//       _id: post_id,
+//       likes: { $in: [user_id] },
+//     });
+//     if (!hasLiked) {
+//       res.json({
+//         code: 400,
+//         message: "Không hợp lệ",
+//       });
+//     } else {
+//       await Post.updateOne(
+//         {
+//           _id: post_id,
+//           deleted: false,
+//         },
+//         {
+//           $pull: { likes: user_id },
+//         }
+//       );
+//       res.json({
+//         code: 200,
+//         message: "Xóa like thành công!",
+//       });
+//     }
+//   } catch (error) {
+//     res.json({
+//       code: 200,
+//       message: "Lỗi!",
+//     });
+//   }
+// };
 
 //[POST] /comment/:id
-export const commenntPost = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const user_id = req.user.id;
-    const post_id: string = req.params.id;
-    const content: string = req.body.content;
-    await Post.updateOne(
-      {
-        _id: post_id,
-        deleted: false,
-      },
-      {
-        $push: {
-          comments: {
-            user_id: user_id,
-            content: content,
-          },
-        },
-      }
-    );
-    res.json({
-      code: 200,
-      message: "Thành công!",
-    });
-  } catch (error) {
-    res.json({
-      code: 400,
-      message: "Lỗi!",
-    });
-  }
-};
+// export const commenntPost = async (
+//   req: Request,
+//   res: Response
+// ): Promise<void> => {
+//   try {
+//     const user_id = req.user.id;
+//     const post_id: string = req.params.id;
+//     const content: string = req.body.content;
+//     await Post.updateOne(
+//       {
+//         _id: post_id,
+//         deleted: false,
+//       },
+//       {
+//         $push: {
+//           comments: {
+//             user_id: user_id,
+//             content: content,
+//           },
+//         },
+//       }
+//     );
+//     res.json({
+//       code: 200,
+//       message: "Thành công!",
+//     });
+//   } catch (error) {
+//     res.json({
+//       code: 400,
+//       message: "Lỗi!",
+//     });
+//   }
+// };
 
 //[GET] /comment/:id
 export const getComment = async (
@@ -326,7 +329,7 @@ export const deleteComment = async (
   try {
     const user_id = req.user.id;
     const post_id: string = req.params.id;
-    const comment_id: string = req.body.comment_id;
+    const comment_id: string = req.body.idComment;
     await Post.updateOne(
       { _id: post_id, deleted: false },
       {

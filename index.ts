@@ -8,6 +8,7 @@ import indexRouterV1 from "./api/v1/routes/client/index.route";
 import { Server } from "socket.io";
 import http from "http";
 import chatSocket from "./sockets/chat.socket";
+import postSocket from "./sockets/post.socket";
 
 dotenv.config();
 database.connect();
@@ -25,6 +26,7 @@ const io = new Server(server, {
 });
 // Khởi tạo socket handler
 chatSocket(io);
+postSocket(io)
 
 
 

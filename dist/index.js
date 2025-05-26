@@ -46,6 +46,7 @@ const index_route_1 = __importDefault(require("./api/v1/routes/client/index.rout
 const socket_io_1 = require("socket.io");
 const http_1 = __importDefault(require("http"));
 const chat_socket_1 = __importDefault(require("./sockets/chat.socket"));
+const post_socket_1 = __importDefault(require("./sockets/post.socket"));
 dotenv_1.default.config();
 database.connect();
 const app = (0, express_1.default)();
@@ -57,6 +58,7 @@ const io = new socket_io_1.Server(server, {
     },
 });
 (0, chat_socket_1.default)(io);
+(0, post_socket_1.default)(io);
 app.use((0, cors_1.default)({
     origin: "http://localhost:3000",
     credentials: true
