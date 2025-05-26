@@ -60,8 +60,7 @@ const io = new socket_io_1.Server(server, {
 (0, chat_socket_1.default)(io);
 (0, post_socket_1.default)(io);
 app.use((0, cors_1.default)({
-    origin: "http://localhost:3000",
-    credentials: true
+    origin: "*"
 }));
 app.use(body_parser_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));

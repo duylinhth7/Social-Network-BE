@@ -31,8 +31,7 @@ postSocket(io)
 
 
 app.use(cors({
-  origin: "http://localhost:3000", // URL của frontend (React hoặc client khác)
-  credentials: true                // Cho phép gửi cookie
+  origin: "*"
 }));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
