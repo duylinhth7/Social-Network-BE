@@ -24,7 +24,7 @@ router.patch(
   controller.edit
 );
 router.post("/login", userValidate.login, controller.login);
-router.get("/detail/:id", controller.detail);
+router.get("/detail/:id", authMiddleware, controller.detail);
 
 //forget-password
 router.post(
