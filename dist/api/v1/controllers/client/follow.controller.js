@@ -121,7 +121,7 @@ const getFollower = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             _id: user_id,
         }).select("follower");
         const followerInfo = yield user_model_1.default.find({
-            _id: { $in: user.following },
+            _id: { $in: user.followews },
         }).select("fullName avatar");
         res.json({
             code: 200,

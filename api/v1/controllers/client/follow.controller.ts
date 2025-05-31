@@ -129,7 +129,7 @@ export const getFollower = async (
       _id: user_id,
     }).select("follower");
     const followerInfo = await User.find({
-      _id: { $in: user.following },
+      _id: { $in: user.followews },
     }).select("fullName avatar");
     res.json({
         code: 200,
