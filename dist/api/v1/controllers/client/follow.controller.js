@@ -94,7 +94,7 @@ const unFollow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.unFollow = unFollow;
 const getFollowing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user_id = req.user.id;
+        const user_id = req.params.id;
         const user = yield user_model_1.default.findOne({
             _id: user_id,
         }).select("following");
@@ -116,13 +116,13 @@ const getFollowing = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.getFollowing = getFollowing;
 const getFollower = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user_id = req.user.id;
+        const user_id = req.params.id;
         const user = yield user_model_1.default.findOne({
             _id: user_id,
         }).select("follower");
         const followerInfo = yield user_model_1.default.find({
             _id: { $in: user.following },
-        }).select("fullName email avatar");
+        }).select("fullName avatar");
         res.json({
             code: 200,
             followerInfo: followerInfo

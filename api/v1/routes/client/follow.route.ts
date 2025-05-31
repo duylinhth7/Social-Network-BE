@@ -4,7 +4,7 @@ import * as controller from "../../controllers/client/follow.controller"
 
 router.post("/:id", controller.follow);
 router.delete("/unfollow/:id", controller.unFollow);
-router.get("/following", controller.getFollowing)
-router.get("/follower", controller.getFollower)
+router.get("/following/:id", controller.getFollowing)
+router.get("/follower/:id", controller.getFollower)
 
 export const followRoutes: Router = router;

@@ -93,13 +93,13 @@ export const unFollow = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-//[GET] /following
+//[GET] /following/:id
 export const getFollowing = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const user_id: string = req.user.id;
+    const user_id: string = req.params.id;
     const user = await User.findOne({
       _id: user_id,
     }).select("following");
@@ -118,19 +118,19 @@ export const getFollowing = async (
   }
 };
 
-//[GET] /following
+//[GET] /follower/user_id
 export const getFollower = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const user_id: string = req.user.id;
+    const user_id: string = req.params.id;
     const user = await User.findOne({
       _id: user_id,
     }).select("follower");
     const followerInfo = await User.find({
       _id: { $in: user.following },
-    }).select("fullName email avatar");
+    }).select("fullName avatar");
     res.json({
         code: 200,
         followerInfo: followerInfo
