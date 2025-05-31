@@ -127,7 +127,7 @@ export const getFollower = async (
     const user_id: string = req.params.id;
     const user = await User.findOne({
       _id: user_id,
-    }).select("follower");
+    }).select("followews");
     const followerInfo = await User.find({
       _id: { $in: user.followews },
     }).select("fullName avatar");

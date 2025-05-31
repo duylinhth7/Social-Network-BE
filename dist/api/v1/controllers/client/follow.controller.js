@@ -119,7 +119,7 @@ const getFollower = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const user_id = req.params.id;
         const user = yield user_model_1.default.findOne({
             _id: user_id,
-        }).select("follower");
+        }).select("followews");
         const followerInfo = yield user_model_1.default.find({
             _id: { $in: user.followews },
         }).select("fullName avatar");
