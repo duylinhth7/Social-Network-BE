@@ -39,7 +39,7 @@ export const index = async (req: Request, res: Response): Promise<void> => {
     if (chats.length > 0) {
       res.json({
         code: 200,
-        chats,
+        chats: chats,
       });
     } else {
       res.json({

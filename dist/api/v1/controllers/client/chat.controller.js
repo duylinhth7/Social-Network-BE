@@ -49,7 +49,7 @@ const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (chats.length > 0) {
             res.json({
                 code: 200,
-                chats,
+                chats: chats,
             });
         }
         else {
